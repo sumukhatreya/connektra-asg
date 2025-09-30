@@ -3,7 +3,8 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 import 'dotenv/config';
-import { notFound, errorHandler } from './error-handlers.js';
+import { notFound, errorHandler } from './services/error-handlers.js';
+import integrations from './api/integrations/index.js';
 
 
 const app = express();
@@ -16,7 +17,9 @@ app.get('/', (req, res) => {
     res.json({
         message: 'Greetings!'
     });
-})
+});
+
+app.use('/api/integrations', integrations);
 
 // Not found middleware
 app.use(notFound);
