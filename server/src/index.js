@@ -5,7 +5,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { notFound, errorHandler } from './services/error-handlers.js';
 import mongoose from 'mongoose';
-import integrations from './api/integrations/index.js';
+import connectors from './api/connectors/index.js';
 import workflows from './api/workflows.js';
 
 
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/integrations', integrations);
+app.use('/connectors', connectors);
 app.use('/workflows', workflows);
 
 // Not found middleware
