@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 import 'dotenv/config';
-import { notFound, errorHandler } from './services/error-handlers.js';
+import { notFound, errorHandler } from './helpers/error-handlers.js';
 import mongoose from 'mongoose';
 import connectors from './api/connectors/index.js';
 import workflows from './api/workflows.js';
