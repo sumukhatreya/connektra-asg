@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import 'dotenv/config';
 import { notFound, errorHandler } from './services/error-handlers.js';
+import mongoose from 'mongoose';
 import integrations from './api/integrations/index.js';
 import workflows from './api/workflows.js';
 
@@ -31,7 +32,12 @@ app.use(errorHandler);
 
 
 const port = process.env.PORT || 3000;
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/connektra-asg-db';
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-})
+// mongoose.connect(dbUrl, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true})
+//   .then(() => app.listen(port, () => console.log(`Listening on port ${port}.`)))
+//   .catch(err => console.log('Error: ', err));
+
+mongoose.connect(dbUrl)
+  .then(() => app.listen(port, () => console.log(`Listening on port ${port}.`)))
+  .catch(err => console.log('Error: ', err));
