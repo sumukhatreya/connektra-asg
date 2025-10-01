@@ -70,3 +70,7 @@ export const generateSecureString = (length = 64) => {
 
   return result;
 };
+
+export const base64Encode = (str) => {
+  return Buffer.from(str).toString('base64');
+};
