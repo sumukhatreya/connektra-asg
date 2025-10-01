@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { encryptToken } from '../helpers/utils'
+import { encryptToken } from '../helpers/utils.js';
 const { Schema, model } = mongoose;
 
 const connectorSchema = new Schema({
@@ -14,11 +14,17 @@ const connectorSchema = new Schema({
     refreshToken: {
         type: String,
     },
-    expiresAt: {
-        type: Date,
+    expiresIn: {
+        type: Number,
     },
     state: {
         type: String,
+    },
+    codeVerifier: {
+        type: String,
+    },
+    scope: {
+        type: String
     },
     status: {
         type: String,
@@ -35,7 +41,7 @@ connectorSchema.pre('save', function(next) {
   next();
 });
 
-const Connector = model('Connector', connectorSchema);
+const Connector = model('connector', connectorSchema);
 
 export default Connector;
 
