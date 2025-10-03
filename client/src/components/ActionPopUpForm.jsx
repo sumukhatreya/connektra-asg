@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 export default function ActionPopUpForm({ onClose }) {
   const [error, setError] = useState(null);
-  const [service, setService] = useState(null);
-  const [event, setEvent] = useState(null);
+  const [service, setService] = useState('');
+  const [event, setEvent] = useState('');
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -14,8 +14,8 @@ export default function ActionPopUpForm({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const actionData = {
-      service,
-      event
+      actioneNode: service,
+      actionEvent: event
     }
     console.log('Form submitted');
     onClose(actionData);
@@ -75,7 +75,7 @@ export default function ActionPopUpForm({ onClose }) {
               }}
             >
               <option value=''>Select an option</option>
-              <option value='airtable'>Airtable</option>
+              {/* <option value='airtable'>Airtable</option> */}
               <option value='elevenlabs'>Eleven Labs</option>
             </select>
           </div>
@@ -140,7 +140,7 @@ export default function ActionPopUpForm({ onClose }) {
               >
                 <option value=''>Select an option</option>
                 <option value='speech'>Generate speech</option>
-                <option value='clone'>Create voice clone</option>
+                {/* <option value='clone'>Create voice clone</option> */}
               </select>
             </div>
           )}

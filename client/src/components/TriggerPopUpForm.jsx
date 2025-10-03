@@ -4,11 +4,9 @@ export default function TriggerPopUpForm({ onClose }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [serviceIntegrated, setServiceIntegrated] = useState(null);
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState('');
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
     async function fetchData() {
       try {
         const res = await fetch(
@@ -18,7 +16,6 @@ export default function TriggerPopUpForm({ onClose }) {
             headers: {
               'Content-Type': 'application/json',
             },
-            signal: signal,
           }
         );
         if (res.ok) {
@@ -29,6 +26,7 @@ export default function TriggerPopUpForm({ onClose }) {
           setServiceIntegrated(false);
         }
       } catch (error) {
+        console.log('In the useEffect hook', error);
         setServiceIntegrated(false);
         setError(error.message);
       } finally {
@@ -37,24 +35,12 @@ export default function TriggerPopUpForm({ onClose }) {
     }
 
     fetchData();
-
-    return () => {
-      controller.abort();
-    };
   }, []);
 
   const connectToService = async () => {
     setLoading(true);
-    const controller = new AbortController();
-    const signal = controller.signal;
     try {
-      await fetch('http://localhost:3000/connectors/airtable/redirect', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: signal,
-      });
+      window.location.href = 'http://localhost:3000/connectors/airtable/redirect';
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -70,7 +56,8 @@ export default function TriggerPopUpForm({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const triggerData = {
-      event
+      tiggerNode: 'airtable',
+      triggerEvent: event
     }
     console.log('Form submitted');
     onClose(triggerData);
