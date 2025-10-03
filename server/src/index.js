@@ -12,7 +12,16 @@ import workflows from './api/workflows.js';
 const app = express();
 app.use(morgan('common'));
 app.use(helmet());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+  })
+);
+
 app.use(cors());
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.status(200);
