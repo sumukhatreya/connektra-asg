@@ -1,5 +1,6 @@
 import Router from 'express';
 import airtable from './airtable/index.js';
+import elevenlabs from './eleven-labs/index.js';
 
 const router = Router();
 
@@ -11,5 +12,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/airtable', airtable);
+router.use('/elevenlabs', elevenlabs);
+
 
 export default router;
