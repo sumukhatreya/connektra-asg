@@ -22,6 +22,7 @@ export default function Flow() {
   const [openActionForm, setOpenActionForm] = useState(false);
   const [actionData, setActionData] = useState(null);
   const [triggerData, setTriggerData] = useState(null);
+  const [error, setError] = useState(null);
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -47,12 +48,36 @@ export default function Flow() {
     setOpenTriggerForm(false);
     setTriggerData(data);
   };
-  const publishWorkflow = () => {
-    console.log('Publishing workflow');
-  }
+  const publishWorkflow = async () => {
+    const workflow = { ...triggerData, ...actionData };
+    try {
+      await fetch('http://localhost:3000/workflows/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workflow),
+      });
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   return (
     <>
+      {error && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: 'red',
+          zIndex: 1000,
+        }}>
+          {error}
+        </div>
+      )}
+      
       <div style={{ width: '100vw', height: '100vh' }}>
         <button
           onClick={publishWorkflow}
