@@ -7,9 +7,15 @@ import {
   base64Encode,
 } from '../../../helpers/utils.js';
 import { makeRequest } from '../../../services/http-services.js';
+import { webhook } from './webhook.js'
 
 const router = Router();
 
+// router.use('/webhook', webhook);
+
+router.post('/webhook', webhook);
+
+// Redirect endpoint to initiate OAuth 2.0 integration
 router.get('/redirect', async (req, res, next) => {
   try {
     const baseUrl = 'https://airtable.com/oauth2/v1/authorize';
@@ -37,6 +43,7 @@ router.get('/redirect', async (req, res, next) => {
   }
 });
 
+// Request and store access and refresh tokens in db
 router.get('/oauth', async (req, res, next) => {
   try {
     const {
@@ -94,13 +101,84 @@ router.get('/oauth', async (req, res, next) => {
     airtableConn.refreshToken = refreshToken;
     airtableConn.scope = scope;
     airtableConn.expiresIn = expiresIn;
+    airtableConn.status = 'success';
+
+    console.log("Airtable access token", accessToken);
 
     await airtableConn.save();
-    res.redirect('http://localhost:3000/')
+    res.redirect('http://localhost:5173/')
   } catch (error) {
     await Connector.deleteOne({ provider: 'airtable' });
     next(error);
   }
 });
+
+// Check if application is integrated with airtable
+router.get('/is-integrated', async (req, res, next) => {
+  try {
+    const airtableConn = await Connector.findOne({ provider: 'airtable' });
+    if (airtableConn) {
+      res.status(200).json({ message: 'Connection found!' });
+    } else {
+      res.status(404).json({ message: 'Service not connected!'});
+    }
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+
+// Get all records from a table
+router.get('/:baseId/:tableId', async (req, res, next) => {
+  try {
+    const { baseId, tableId } = req.params;
+    const connector = await Connector.findOne({ provider: 'airtable' });
+    const url = `${process.env.AIRTABLE_API_BASE}/${baseId}/${tableId}`;
+    const accessToken = decryptToken(connector.accessToken);
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    const data = await makeRequest(url, 'GET', headers);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get a single record
+router.get('/:baseId/:tableId/:recordId', async (req, res, next) => {
+  try {
+    const { baseId, tableId, recordId } = req.params;
+    const connector = await Connector.findOne({ provider: 'airtable' });
+    const url = `${process.env.AIRTABLE_API_BASE}/${baseId}/${tableId}/${recordId}`;
+    const accessToken = decryptToken(connector.accessToken);
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    const data = await makeRequest(url, 'GET', headers);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Create a record
+router.post('/:baseId/:tableId', async (req, res, next) => {
+  try {
+    const { baseId, tableId } = req.params;
+    const { fields } = req.body;
+    const connector = await Connector.findOne({ provider: 'airtable' });
+    const url = `${process.env.AIRTABLE_API_BASE}/${baseId}/${tableId}`;
+    const accessToken = decryptToken(connector.accessToken);
+    const headers = { 
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    };
+    const body = { fields };
+    const data = await makeRequest(url, 'POST', headers, body);
+    res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 
 export default router;
