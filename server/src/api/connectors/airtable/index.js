@@ -11,8 +11,6 @@ import { webhook } from './webhook.js'
 
 const router = Router();
 
-// router.use('/webhook', webhook);
-
 router.post('/webhook', webhook);
 
 // Redirect endpoint to initiate OAuth 2.0 integration
@@ -64,9 +62,7 @@ router.get('/oauth', async (req, res, next) => {
     if (!state) {
       throw new Error('State not received from airtable url');
     }
-    console.log('State sent in Uri', state);
     const airtableConn = await Connector.findOne({ provider: 'airtable' });
-    console.log('This is the found airtableConn', airtableConn);
     const { state: storedState, codeVerifier } = airtableConn;
     console.log('Stored state', storedState);
     if (state !== storedState) {
@@ -89,7 +85,6 @@ router.get('/oauth', async (req, res, next) => {
     });
 
     const data = await makeRequest(reqUrl, 'POST', headers, params.toString());
-    console.log('This is the received data', data);
     const {
       scope,
       access_token: accessToken,
