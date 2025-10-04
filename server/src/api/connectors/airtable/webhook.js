@@ -14,7 +14,6 @@ export const webhook = async (req, res, next) => {
       '..',
       'audio'
     );
-    // const directory = path.join(__dirname, '..', '..', '..', '..', 'audio');
     if (service === 'airtable') {
       const workflow = await Workflow.findOne({
         triggerNode: 'airtable',
@@ -27,6 +26,7 @@ export const webhook = async (req, res, next) => {
         await generateAudio(audioFileName, directory, recordText);
         res.status(201).json({ message: `Audio file created: ${audioFileName}`});
       } else {
+        res.status(404);
         throw new Error('Workflow not found');
       }
     }
