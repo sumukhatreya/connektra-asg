@@ -158,7 +158,7 @@ router.get('/:baseId/:tableId/:recordId', async (req, res, next) => {
 router.post('/:baseId/:tableId', async (req, res, next) => {
   try {
     const { baseId, tableId } = req.params;
-    const { fields } = req.body;
+    const { records } = req.body;
     const connector = await Connector.findOne({ provider: 'airtable' });
     const url = `${process.env.AIRTABLE_API_BASE}/${baseId}/${tableId}`;
     const accessToken = decryptToken(connector.accessToken);
@@ -166,7 +166,7 @@ router.post('/:baseId/:tableId', async (req, res, next) => {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     };
-    const body = { fields };
+    const body = { records };
     const data = await makeRequest(url, 'POST', headers, body);
     res.status(201).json(data);
   } catch (error) {

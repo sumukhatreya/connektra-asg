@@ -51,6 +51,7 @@ export default function Flow() {
   const publishWorkflow = async () => {
     const workflow = { ...triggerData, ...actionData };
     try {
+      console.log('Button clicked', workflow);
       await fetch('http://localhost:3000/workflows/create', {
         method: 'POST',
         headers: {
@@ -66,40 +67,43 @@ export default function Flow() {
   return (
     <>
       {error && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          color: 'red',
-          zIndex: 1000,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'red',
+            zIndex: 1000,
+          }}
+        >
           {error}
         </div>
       )}
-      
+
+      <button
+        onClick={publishWorkflow}
+        disabled={!actionData || !triggerData}
+        style={{
+          position: 'absolute',
+          top: '90px',
+          right: '50px',
+          zIndex: 1000,
+          padding: '10px 20px',
+          backgroundColor: '#0066cc',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: actionData && triggerData ? 'pointer' : 'not-allowed',
+          opacity: actionData && triggerData ? 1 : 0.6,
+        }}
+      >
+        Publish
+      </button>
+
       <div style={{ width: '100vw', height: '100vh' }}>
-        <button
-          onClick={publishWorkflow}
-          disabled={!actionData || !triggerData}
-          style={{
-            position: 'absolute',
-            top: '90px',
-            right: '50px',
-            zIndex: 10,
-            padding: '10px 20px',
-            backgroundColor: '#0066cc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: (actionData && triggerData) ? 'pointer' : 'not-allowed',
-            opacity: (actionData && triggerData) ? 1 : 0.6,
-          }}
-        >
-          Publish
-        </button>
         <ReactFlow
           nodes={nodes}
           edges={edges}

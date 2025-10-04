@@ -56,7 +56,7 @@ export default function TriggerPopUpForm({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const triggerData = {
-      tiggerNode: 'airtable',
+      triggerNode: 'airtable',
       triggerEvent: event
     }
     console.log('Form submitted');
